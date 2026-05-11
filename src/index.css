@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Naskh+Arabic:wght@400..700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Amiri", serif;
+  --font-sans: "Noto Naskh Arabic", sans-serif;
+  --color-beige-50: #fdfaf6;
+  --color-beige-100: #f7f3e9;
+  --color-beige-200: #eee8d5;
+  --color-beige-300: #dfd5b5;
+}
+
+body {
+  @apply bg-beige-100 text-stone-800;
+  margin: 0;
+  overscroll-behavior: none;
+}
+
+.arabic-text {
+  direction: rtl;
+}
