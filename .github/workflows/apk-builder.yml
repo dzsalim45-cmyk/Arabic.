@@ -19,18 +19,22 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Create local.properties
-        run: echo "sdk.dir=$ANDROID_HOME" > local.properties
-
-      - name: Make gradlew executable
-        run: chmod +x gradlew || true
-
       - name: Build APK
         run: |
-          if [ -f "./gradlew" ]; then
-            ./gradlew assembleDebug --no-daemon || ./gradlew assemble --no-daemon
+          # Find gradlew file avoiding node_modules
+          GRADLEW_PATH=$(find . -not -path "*/node_modules/*" -not -path "*/.git/*" -name "gradlew" -type f | head -n 1)
+          
+          if [ -n "$GRADLEW_PATH" ]; then
+            GRADLE_DIR=$(dirname "$GRADLEW_PATH")
+            echo "Found gradlew in $GRADLE_DIR"
+            cd "$GRADLE_DIR"
+            echo "sdk.dir=$ANDROID_HOME" > local.properties
+            chmod +x gradlew
+            ./gradlew assembleDebug --stacktrace --no-daemon || ./gradlew assemble --stacktrace --no-daemon
           else
-            gradle assembleDebug --no-daemon || gradle assemble --no-daemon
+            echo "No gradlew found. Trying global gradle."
+            echo "sdk.dir=$ANDROID_HOME" > local.properties
+            gradle assembleDebug --stacktrace --no-daemon || gradle assemble --stacktrace --no-daemon
           fi
 
       - name: Upload APKs
